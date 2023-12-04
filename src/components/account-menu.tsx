@@ -1,5 +1,5 @@
 import { Button } from './ui/button'
-import { Building, ChevronDown, LogOut, User } from 'lucide-react'
+import { Building, ChevronDown, LogOut } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -16,6 +16,7 @@ import { getProfile } from '@/api/get-profile'
 import { getManagedRestaurant } from '@/api/get-managed-restaurant'
 import { useNavigate } from 'react-router-dom'
 import { signOut } from '@/api/sign-out'
+import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
   const navigate = useNavigate()
@@ -52,23 +53,36 @@ export function AccountMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            {managedRestaurant?.name}
-            <Building className="h-4 w-4" />
+            {isLoadingManagedRestaurant ? (
+              <Skeleton className="h-4 w-40" />
+            ) : (
+              managedRestaurant?.name
+            )}
+            <ChevronDown className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel className="flex flex-col">
-            {profile?.name}
-            <span className="text-xs font-normal text-muted-foreground">
-              {profile?.email}
-            </span>
+            {isLoadingProfile ? (
+              <div className="space-y-1.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+            ) : (
+              <>
+                {profile?.name}
+                <span className="text-xs font-normal text-muted-foreground">
+                  {profile?.email}
+                </span>
+              </>
+            )}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DialogTrigger asChild>
               <DropdownMenuItem>
                 <Building className="mr-2 h-4 w-4" />
-                <span>Perfil</span>
+                <span>Perfil da loja</span>
               </DropdownMenuItem>
             </DialogTrigger>
             <DropdownMenuItem

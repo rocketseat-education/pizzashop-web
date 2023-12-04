@@ -11,6 +11,8 @@ interface GetProfileResponse {
 }
 
 export async function getProfile() {
+  await new Promise((resolve) => setTimeout(resolve, 2000))
+
   const response = await api.get<GetProfileResponse>('/me')
 
   return response.data
