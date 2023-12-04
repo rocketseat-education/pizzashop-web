@@ -17,6 +17,8 @@
     "@radix-ui/react-separator": "1.0.3",
     "@radix-ui/react-slot": "1.0.2",
     "@radix-ui/react-switch": "1.0.3",
+    "@tanstack/react-query": "5.12.0",
+    "axios": "1.6.2",
     "class-variance-authority": "0.7.0",
     "clsx": "2.0.0",
     "date-fns": "2.30.0",
@@ -27,6 +29,7 @@
     "react-day-picker": "8.9.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "6.18.0",
+    "sonner": "1.2.4",
     "sort-by": "1.2.0",
     "tailwind-merge": "2.0.0",
     "tailwindcss-animate": "1.0.7"

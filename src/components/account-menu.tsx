@@ -11,8 +11,19 @@ import {
 } from './ui/dropdown-menu'
 import { Dialog, DialogTrigger } from './ui/dialog'
 import { StoreProfile } from './store-profile'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/axios'
 
 export function AccountMenu() {
+  const { data } = useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const response = await api.get('/me')
+
+      return response.data
+    },
+  })
+
   return (
     <Dialog>
       <DropdownMenu>

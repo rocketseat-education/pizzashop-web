@@ -2,8 +2,39 @@ import { twMerge } from 'tailwind-merge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { useMutation } from '@tanstack/react-query'
+import { api } from '@/lib/axios'
+import { FormEvent } from 'react'
+import { toast } from 'sonner'
 
 export function SignIn() {
+  const { mutateAsync: authenticate, isPending: isAuthenticating } =
+    useMutation({
+      mutationFn: async (email: string) => {
+        await api.post('/authenticate', { email })
+      },
+    })
+
+  async function handleAuthenticate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const form = event.currentTarget
+
+    const formData = new FormData(form)
+    const data = Object.fromEntries(formData)
+
+    const email = data.email.toString()
+
+    await authenticate(email)
+
+    toast.success('Enviamos um link de autenticação para seu e-mail.', {
+      action: {
+        label: 'Reenviar',
+        onClick: () => authenticate(email),
+      },
+    })
+  }
+
   return (
     <div className="lg:p-8">
       <a
@@ -27,20 +58,24 @@ export function SignIn() {
         </div>
 
         <div className="grid gap-6">
-          <form>
+          <form onSubmit={handleAuthenticate}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Seu e-mail</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
+                  required
                 />
               </div>
 
-              <Button>Acessar painel</Button>
+              <Button type="submit" disabled={isAuthenticating}>
+                Acessar painel
+              </Button>
             </div>
           </form>
         </div>
