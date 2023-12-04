@@ -12,6 +12,7 @@ import {
 import {
   Table,
   TableBody,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -19,6 +20,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { getOrders } from '@/api/get-orders'
 import { OrderTableRow } from './order-table-row'
+import { Pagination } from '@/components/pagination'
 
 export function Orders() {
   const { data: result, isLoading: isLoadingOrders } = useQuery({
@@ -69,6 +71,21 @@ export function Orders() {
               </TableBody>
             </Table>
           </div>
+          {result && (
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                Total de {result.meta.totalCount} pedido(s)
+              </span>
+
+              <Pagination
+                pageIndex={0}
+                totalCount={result.meta.totalCount}
+                onPageChange={async (pageIndex) => {
+                  console.log(pageIndex)
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
