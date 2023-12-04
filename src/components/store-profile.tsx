@@ -70,9 +70,9 @@ export function StoreProfile() {
   }
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
+    <DialogContent className="sm:max-w-[520px]">
       <DialogHeader>
-        <DialogTitle>Perfil do estabelecimento</DialogTitle>
+        <DialogTitle>Perfil da loja</DialogTitle>
         <DialogDescription>
           Atualize as informações do seu estabelecimento visíveis aos seus
           clientes.
