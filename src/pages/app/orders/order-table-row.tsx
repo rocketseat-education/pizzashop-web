@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Check, Search, X } from 'lucide-react'
+import { ArrowRight, Check, Search, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { approveOrder } from '@/api/approve-order'
@@ -19,13 +19,7 @@ export interface OrderTableRowProps {
     createdAt: string
     customerName: string
     total: number
-    status:
-      | 'pending'
-      | 'approved'
-      | 'canceled'
-      | 'processing'
-      | 'delivering'
-      | 'delivered'
+    status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
   }
 }
 
@@ -51,7 +45,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
 
               return {
                 ...order,
-                status: 'approved',
+                status: 'processing',
               }
             }),
           })
@@ -61,6 +55,19 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
 
   return (
     <TableRow>
+      <TableCell>
+        <Dialog onOpenChange={setIsOrderDetailsOpen} open={isOrderDetailsOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="xs">
+              <Search className="h-3 w-3" />
+              <span className="sr-only">Detalhes do pedido</span>
+            </Button>
+          </DialogTrigger>
+
+          <OrderDetails open={isOrderDetailsOpen} orderId={order.orderId} />
+        </Dialog>
+      </TableCell>
+
       <TableCell className="font-mono text-xs font-medium">
         {order.orderId}
       </TableCell>
@@ -70,10 +77,13 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           addSuffix: true,
         })}
       </TableCell>
+
       <TableCell>
         <OrderStatus status={order.status} />
       </TableCell>
+
       <TableCell className="font-medium">{order.customerName}</TableCell>
+
       <TableCell>
         <div className="flex flex-col gap-0.5">
           <span className="font-medium">
@@ -87,40 +97,38 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       </TableCell>
 
       <TableCell>
-        <Dialog onOpenChange={setIsOrderDetailsOpen} open={isOrderDetailsOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="xs">
-              <Search className="mr-2 h-3 w-3" />
-              Detalhes
-            </Button>
-          </DialogTrigger>
+        {order.status === 'processing' && (
+          <Button className="w-full" variant="outline" size="xs">
+            Em entrega
+            <ArrowRight className="ml-2 h-3 w-3" />
+          </Button>
+        )}
 
-          <OrderDetails open={isOrderDetailsOpen} orderId={order.orderId} />
-        </Dialog>
+        {order.status === 'delivering' && (
+          <Button className="w-full" variant="outline" size="xs">
+            Entregue
+            <ArrowRight className="ml-2 h-3 w-3" />
+          </Button>
+        )}
+
+        {order.status === 'pending' && (
+          <Button className="w-full" variant="outline" size="xs">
+            Aprovar
+            <ArrowRight className="ml-2 h-3 w-3" />
+          </Button>
+        )}
       </TableCell>
 
       <TableCell>
-        {order.status === 'pending' ? (
-          <Button
-            onClick={() => approveOrderFn({ orderId: order.orderId })}
-            disabled={isApprovingOrder}
-            variant="outline"
-            size="xs"
-          >
-            <Check className="mr-2 h-3 w-3" />
-            Aprovar
-          </Button>
-        ) : (
-          <Button
-            onClick={() => approveOrderFn({ orderId: order.orderId })}
-            disabled={isApprovingOrder}
-            variant="ghost"
-            size="xs"
-          >
-            <X className="mr-2 h-3 w-3" />
-            Cancelar
-          </Button>
-        )}
+        <Button
+          onClick={() => approveOrderFn({ orderId: order.orderId })}
+          disabled={!['pending', 'processing'].includes(order.status)}
+          variant="ghost"
+          size="xs"
+        >
+          <X className="mr-2 h-3 w-3" />
+          Cancelar
+        </Button>
       </TableCell>
     </TableRow>
   )

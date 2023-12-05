@@ -41,14 +41,17 @@ export function Orders() {
   const orderId = searchParams.get('orderId')
   const customerName = searchParams.get('customerName')
   const status = searchParams.get('status')
-  const pageIndex = z.coerce.number().default(0).parse(searchParams.get('page'))
+  const pageIndex = z.coerce
+    .number()
+    .transform((page) => page - 1)
+    .parse(searchParams.get('page') ?? '1')
 
   const { register, handleSubmit, reset, control } =
     useForm<OrderFiltersSchema>({
       defaultValues: {
         orderId: orderId ?? '',
         customerName: customerName ?? '',
-        status: status ?? '',
+        status: status ?? 'all',
       },
     })
 
@@ -56,13 +59,19 @@ export function Orders() {
 
   const { data: result, isFetching: isFetchingOrders } = useQuery({
     queryKey: ['orders', customerName, orderId, status, pageIndex],
-    queryFn: () => getOrders({ pageIndex, customerName, orderId, status }),
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        customerName,
+        orderId,
+        status: status === 'all' ? null : status,
+      }),
     placeholderData: keepPreviousData,
   })
 
   function handlePaginate(pageIndex: number) {
     setSearchParams((prev) => {
-      prev.set('page', pageIndex.toString())
+      prev.set('page', (pageIndex + 1).toString())
 
       return prev
     })
@@ -92,7 +101,7 @@ export function Orders() {
         prev.delete('status')
       }
 
-      prev.set('page', '0')
+      prev.set('page', '1')
 
       return prev
     })
@@ -103,7 +112,7 @@ export function Orders() {
       prev.delete('orderId')
       prev.delete('customerName')
       prev.delete('status')
-      prev.set('page', '0')
+      prev.set('page', '1')
 
       return prev
     })
@@ -153,11 +162,11 @@ export function Orders() {
                     disabled={disabled}
                   >
                     <SelectTrigger className="h-8 w-[180px]">
-                      <SelectValue placeholder="Status do pedido" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all">Todos status</SelectItem>
                       <SelectItem value="pending">Pendente</SelectItem>
-                      <SelectItem value="approved">Aprovado</SelectItem>
                       <SelectItem value="canceled">Cancelado</SelectItem>
                       <SelectItem value="processing">Em preparo</SelectItem>
                       <SelectItem value="delivering">Em entrega</SelectItem>
@@ -187,12 +196,13 @@ export function Orders() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[64px]"></TableHead>
                   <TableHead className="w-[140px]">Identificador</TableHead>
                   <TableHead className="w-[140px]">Realizado há</TableHead>
                   <TableHead className="w-[140px]">Status</TableHead>
                   <TableHead>Cliente</TableHead>
                   <TableHead className="w-[140px]">Total do pedido</TableHead>
-                  <TableHead className="w-[132px]"></TableHead>
+                  <TableHead className="w-[164px]"></TableHead>
                   <TableHead className="w-[132px]"></TableHead>
                 </TableRow>
               </TableHeader>

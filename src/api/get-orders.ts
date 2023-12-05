@@ -13,13 +13,7 @@ export interface GetOrdersResponse {
     createdAt: string
     customerName: string
     total: number
-    status:
-      | 'pending'
-      | 'approved'
-      | 'canceled'
-      | 'processing'
-      | 'delivering'
-      | 'delivered'
+    status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
   }[]
   meta: {
     pageIndex: number

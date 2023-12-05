@@ -21,13 +21,7 @@ export interface GetOrderDetailsResponse {
       name: string
     }
   }[]
-  status:
-    | 'pending'
-    | 'approved'
-    | 'canceled'
-    | 'processing'
-    | 'delivering'
-    | 'delivered'
+  status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
 }
 
 export async function getOrderDetails({ orderId }: GetOrderDetailsParams) {
