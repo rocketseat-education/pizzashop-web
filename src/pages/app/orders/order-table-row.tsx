@@ -1,13 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Check } from 'lucide-react'
+import { Check, Search, X } from 'lucide-react'
+import { useState } from 'react'
 
 import { approveOrder } from '@/api/approve-order'
 import { GetOrdersResponse } from '@/api/get-orders'
 import { OrderStatus } from '@/components/order-status'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { TableCell, TableRow } from '@/components/ui/table'
+
+import { OrderDetails } from './order-details'
 
 export interface OrderTableRowProps {
   order: {
@@ -26,6 +30,7 @@ export interface OrderTableRowProps {
 }
 
 export function OrderTableRow({ order }: OrderTableRowProps) {
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false)
   const queryClient = useQueryClient()
 
   const { mutateAsync: approveOrderFn, isPending: isApprovingOrder } =
@@ -80,8 +85,22 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           <span className="text-xs text-muted-foreground">3 produto(s)</span>
         </div>
       </TableCell>
+
       <TableCell>
-        {order.status === 'pending' && (
+        <Dialog onOpenChange={setIsOrderDetailsOpen} open={isOrderDetailsOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="xs">
+              <Search className="mr-2 h-3 w-3" />
+              Detalhes
+            </Button>
+          </DialogTrigger>
+
+          <OrderDetails open={isOrderDetailsOpen} orderId={order.orderId} />
+        </Dialog>
+      </TableCell>
+
+      <TableCell>
+        {order.status === 'pending' ? (
           <Button
             onClick={() => approveOrderFn({ orderId: order.orderId })}
             disabled={isApprovingOrder}
@@ -90,6 +109,16 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           >
             <Check className="mr-2 h-3 w-3" />
             Aprovar
+          </Button>
+        ) : (
+          <Button
+            onClick={() => approveOrderFn({ orderId: order.orderId })}
+            disabled={isApprovingOrder}
+            variant="ghost"
+            size="xs"
+          >
+            <X className="mr-2 h-3 w-3" />
+            Cancelar
           </Button>
         )}
       </TableCell>

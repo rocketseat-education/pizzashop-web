@@ -192,7 +192,8 @@ export function Orders() {
                   <TableHead className="w-[140px]">Status</TableHead>
                   <TableHead>Cliente</TableHead>
                   <TableHead className="w-[140px]">Total do pedido</TableHead>
-                  <TableHead className="w-[140px]"></TableHead>
+                  <TableHead className="w-[132px]"></TableHead>
+                  <TableHead className="w-[132px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -204,7 +205,7 @@ export function Orders() {
                 {result && result.orders.length === 0 && (
                   <TableRow>
                     <TableCell
-                      colSpan={6}
+                      colSpan={7}
                       className="py-10 text-center text-muted-foreground"
                     >
                       Nenhum resultado encontrado.
