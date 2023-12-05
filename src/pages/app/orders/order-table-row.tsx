@@ -1,12 +1,13 @@
-import { OrderStatus } from '@/components/order-status'
-import { TableRow, TableCell } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Check } from 'lucide-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { approveOrder } from '@/api/approve-order'
 import { GetOrdersResponse } from '@/api/get-orders'
+import { OrderStatus } from '@/components/order-status'
+import { Button } from '@/components/ui/button'
+import { TableCell, TableRow } from '@/components/ui/table'
 
 export interface OrderTableRowProps {
   order: {

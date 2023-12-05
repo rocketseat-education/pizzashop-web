@@ -1,12 +1,13 @@
 import './index.css'
 
-import { RouterProvider } from 'react-router-dom'
-import { HelmetProvider, Helmet } from 'react-helmet-async'
-import { ThemeProvider } from './components/theme-provider'
-import { router } from './routes'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient } from './lib/react-query'
+import { Helmet, HelmetProvider } from 'react-helmet-async'
+import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
+
+import { ThemeProvider } from './components/theme-provider'
+import { queryClient } from './lib/react-query'
+import { router } from './routes'
 
 export function App() {
   return (

@@ -1,7 +1,8 @@
-import { Pizza, Home, UtensilsCrossed, Star, ClipboardList } from 'lucide-react'
-import { ThemeToggle } from './theme-toggle'
-import { NavLink } from './nav-link'
+import { ClipboardList, Home, Pizza, Star, UtensilsCrossed } from 'lucide-react'
+
 import { AccountMenu } from './account-menu'
+import { NavLink } from './nav-link'
+import { ThemeToggle } from './theme-toggle'
 import { Separator } from './ui/separator'
 
 export function Header() {

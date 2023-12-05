@@ -1,23 +1,34 @@
-import { Label } from './ui/label'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import {
+  getManagedRestaurant,
+  GetManagedRestaurantResponse,
+} from '@/api/get-managed-restaurant'
+import { updateProfile } from '@/api/update-profile'
+
 import { Button } from './ui/button'
 import {
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
+  DialogHeader,
+  DialogTitle,
 } from './ui/dialog'
 import { Input } from './ui/input'
-import {
-  GetManagedRestaurantResponse,
-  getManagedRestaurant,
-} from '@/api/get-managed-restaurant'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
-import { updateProfile } from '@/api/update-profile'
-import { FormEvent } from 'react'
-import { toast } from 'sonner'
+
+const storeProfileSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+})
+
+type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
 export function StoreProfile() {
   const queryClient = useQueryClient()
@@ -28,39 +39,43 @@ export function StoreProfile() {
     staleTime: Infinity,
   })
 
-  const { mutateAsync: updateProfileFn, isPending: isUpdatingProfile } =
-    useMutation({
-      mutationFn: updateProfile,
-      onMutate: async ({ name, description }) => {
-        const managedRestaurantCache =
-          queryClient.getQueryData<GetManagedRestaurantResponse>([
-            'managed-restaurant',
-          ])
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<StoreProfileSchema>({
+    resolver: zodResolver(storeProfileSchema),
+    values: {
+      name: storeProfile?.name ?? '',
+      description: storeProfile?.description ?? '',
+    },
+  })
 
-        if (managedRestaurantCache) {
-          queryClient.setQueryData<GetManagedRestaurantResponse>(
-            ['managed-restaurant'],
-            {
-              ...managedRestaurantCache,
-              name,
-              description,
-            },
-          )
-        }
-      },
-    })
+  const { mutateAsync: updateProfileFn } = useMutation({
+    mutationFn: updateProfile,
+    onMutate: async ({ name, description }) => {
+      const managedRestaurantCache =
+        queryClient.getQueryData<GetManagedRestaurantResponse>([
+          'managed-restaurant',
+        ])
 
-  async function handleUpdateProfile(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+      if (managedRestaurantCache) {
+        queryClient.setQueryData<GetManagedRestaurantResponse>(
+          ['managed-restaurant'],
+          {
+            ...managedRestaurantCache,
+            name,
+            description,
+          },
+        )
+      }
+    },
+  })
 
-    const form = event.currentTarget
-
-    const formData = new FormData(form)
-    const data = Object.fromEntries(formData)
-
-    const name = data.name.toString()
-    const description = data.description.toString()
-
+  async function handleUpdateProfile({
+    name,
+    description,
+  }: StoreProfileSchema) {
     await updateProfileFn({
       name,
       description,
@@ -78,19 +93,17 @@ export function StoreProfile() {
           clientes.
         </DialogDescription>
       </DialogHeader>
-      <form onSubmit={handleUpdateProfile}>
+      <form onSubmit={handleSubmit(handleUpdateProfile)}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Nome
             </Label>
             <Input
-              name="name"
               id="name"
-              defaultValue={storeProfile?.name ?? ''}
               className="col-span-3"
               disabled={isLoadingStoreProfile}
-              required
+              {...register('name')}
             />
           </div>
           <div className="grid grid-cols-4 items-baseline gap-4">
@@ -98,11 +111,10 @@ export function StoreProfile() {
               Descrição
             </Label>
             <Textarea
-              name="description"
               id="description"
-              defaultValue={storeProfile?.description ?? ''}
               className="col-span-3 min-h-[100px]"
               disabled={isLoadingStoreProfile}
+              {...register('description')}
             />
           </div>
         </div>
@@ -115,7 +127,7 @@ export function StoreProfile() {
           <Button
             type="submit"
             variant="success"
-            disabled={isLoadingStoreProfile || isUpdatingProfile}
+            disabled={isLoadingStoreProfile || isSubmitting}
           >
             Salvar
           </Button>

@@ -1,7 +1,13 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { Loader2Icon, Search, X } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
-import { useForm, Controller } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
 
+import { getOrders } from '@/api/get-orders'
+import { Pagination } from '@/components/pagination'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -18,13 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
-import { getOrders } from '@/api/get-orders'
+
 import { OrderTableRow } from './order-table-row'
-import { Pagination } from '@/components/pagination'
-import { Loader2Icon, Search, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 const ordersFiltersSchema = z.object({
   orderId: z.string().optional(),
@@ -40,6 +41,7 @@ export function Orders() {
   const orderId = searchParams.get('orderId')
   const customerName = searchParams.get('customerName')
   const status = searchParams.get('status')
+  const pageIndex = z.coerce.number().default(0).parse(searchParams.get('page'))
 
   const { register, handleSubmit, reset, control } =
     useForm<OrderFiltersSchema>({
@@ -49,10 +51,6 @@ export function Orders() {
         status: status ?? '',
       },
     })
-
-  const pageIndex = searchParams.get('page')
-    ? Number(searchParams.get('page'))
-    : 0
 
   const hasAnyFilter = !!orderId || !!customerName || !!status
 

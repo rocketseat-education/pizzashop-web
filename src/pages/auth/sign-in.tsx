@@ -1,11 +1,12 @@
-import { twMerge } from 'tailwind-merge'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { useMutation } from '@tanstack/react-query'
-import { api } from '@/lib/axios'
 import { FormEvent } from 'react'
 import { toast } from 'sonner'
+import { twMerge } from 'tailwind-merge'
+
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { api } from '@/lib/axios'
 
 export function SignIn() {
   const { mutateAsync: authenticate, isPending: isAuthenticating } =

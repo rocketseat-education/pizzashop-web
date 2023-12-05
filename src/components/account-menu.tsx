@@ -1,21 +1,23 @@
-import { Button } from './ui/button'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Building, ChevronDown, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import { getManagedRestaurant } from '@/api/get-managed-restaurant'
+import { getProfile } from '@/api/get-profile'
+import { signOut } from '@/api/sign-out'
+
+import { StoreProfile } from './store-profile'
+import { Button } from './ui/button'
+import { Dialog, DialogTrigger } from './ui/dialog'
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { Dialog, DialogTrigger } from './ui/dialog'
-import { StoreProfile } from './store-profile'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getProfile } from '@/api/get-profile'
-import { getManagedRestaurant } from '@/api/get-managed-restaurant'
-import { useNavigate } from 'react-router-dom'
-import { signOut } from '@/api/sign-out'
 import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
