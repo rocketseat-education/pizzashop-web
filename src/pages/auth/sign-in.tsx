@@ -1,31 +1,37 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { FormEvent } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { api } from '@/lib/axios'
 
+const signInSchema = z.object({
+  email: z.string().email(),
+})
+
+type SignInSchema = z.infer<typeof signInSchema>
+
 export function SignIn() {
-  const { mutateAsync: authenticate, isPending: isAuthenticating } =
-    useMutation({
-      mutationFn: async (email: string) => {
-        await api.post('/authenticate', { email })
-      },
-    })
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema),
+  })
 
-  async function handleAuthenticate(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: async (email: string) => {
+      await api.post('/authenticate', { email })
+    },
+  })
 
-    const form = event.currentTarget
-
-    const formData = new FormData(form)
-    const data = Object.fromEntries(formData)
-
-    const email = data.email.toString()
-
+  async function handleAuthenticate({ email }: SignInSchema) {
     await authenticate(email)
 
     toast.success('Enviamos um link de autenticação para seu e-mail.', {
@@ -59,22 +65,21 @@ export function SignIn() {
         </div>
 
         <div className="grid gap-6">
-          <form onSubmit={handleAuthenticate}>
+          <form onSubmit={handleSubmit(handleAuthenticate)}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Seu e-mail</Label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
-                  required
+                  {...register('email')}
                 />
               </div>
 
-              <Button type="submit" disabled={isAuthenticating}>
+              <Button type="submit" disabled={isSubmitting}>
                 Acessar painel
               </Button>
             </div>
