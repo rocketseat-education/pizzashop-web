@@ -54,7 +54,10 @@ export function AccountMenu() {
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="flex select-none items-center gap-2"
+          >
             {isLoadingManagedRestaurant ? (
               <Skeleton className="h-4 w-40" />
             ) : (
