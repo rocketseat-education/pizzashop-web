@@ -11,6 +11,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -20,7 +21,7 @@ import { useSearchParams } from 'react-router-dom'
 import { getOrders } from '@/api/get-orders'
 import { OrderTableRow } from './order-table-row'
 import { Pagination } from '@/components/pagination'
-import { Loader2Icon, Search } from 'lucide-react'
+import { Loader2Icon, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FormEvent } from 'react'
 
@@ -33,10 +34,13 @@ export function Orders() {
 
   const orderId = searchParams.get('orderId')
   const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
+  const hasAnyFilter = !!orderId || !!customerName || !!status
 
   const { data: result, isFetching: isFetchingOrders } = useQuery({
-    queryKey: ['orders', customerName, orderId, pageIndex],
-    queryFn: () => getOrders({ pageIndex, customerName, orderId }),
+    queryKey: ['orders', customerName, orderId, status, pageIndex],
+    queryFn: () => getOrders({ pageIndex, customerName, orderId, status }),
     placeholderData: keepPreviousData,
   })
 
@@ -85,6 +89,17 @@ export function Orders() {
     })
   }
 
+  function handleClearFilters() {
+    setSearchParams((prev) => {
+      prev.delete('orderId')
+      prev.delete('customerName')
+      prev.delete('status')
+      prev.set('page', '0')
+
+      return prev
+    })
+  }
+
   return (
     <>
       <Helmet title="Pedidos" />
@@ -110,14 +125,15 @@ export function Orders() {
               className="h-8 w-[320px]"
               defaultValue={customerName ?? ''}
             />
-            <Select name="status">
+            <Select name="status" defaultValue={status ?? undefined}>
               <SelectTrigger className="h-8 w-[180px]">
                 <SelectValue placeholder="Status do pedido" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pending">Pendente</SelectItem>
-                <SelectItem value="accepted">Aceito</SelectItem>
-                <SelectItem value="preparing">Em preparo</SelectItem>
+                <SelectItem value="approved">Aprovado</SelectItem>
+                <SelectItem value="canceled">Cancelado</SelectItem>
+                <SelectItem value="processing">Em preparo</SelectItem>
                 <SelectItem value="delivering">Em entrega</SelectItem>
                 <SelectItem value="delivered">Entregue</SelectItem>
               </SelectContent>
@@ -125,6 +141,16 @@ export function Orders() {
             <Button type="submit" variant="secondary" size="xs">
               <Search className="mr-2 h-4 w-4" />
               Filtrar resultados
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="xs"
+              disabled={!hasAnyFilter}
+              onClick={handleClearFilters}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Remover filtros
             </Button>
           </form>
           <div className="rounded-md border">
@@ -144,6 +170,17 @@ export function Orders() {
                   result.orders.map((order) => {
                     return <OrderTableRow key={order.orderId} order={order} />
                   })}
+
+                {result && result.orders.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="py-10 text-center text-muted-foreground"
+                    >
+                      Nenhum resultado encontrado.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
