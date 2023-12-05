@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async'
 
-import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -21,7 +20,9 @@ import { useSearchParams } from 'react-router-dom'
 import { getOrders } from '@/api/get-orders'
 import { OrderTableRow } from './order-table-row'
 import { Pagination } from '@/components/pagination'
-import { Loader2Icon } from 'lucide-react'
+import { Loader2Icon, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FormEvent } from 'react'
 
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -30,15 +31,55 @@ export function Orders() {
     ? Number(searchParams.get('page'))
     : 0
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+
   const { data: result, isFetching: isFetchingOrders } = useQuery({
-    queryKey: ['orders', pageIndex],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ['orders', customerName, orderId, pageIndex],
+    queryFn: () => getOrders({ pageIndex, customerName, orderId }),
     placeholderData: keepPreviousData,
   })
 
   function handlePaginate(pageIndex: number) {
     setSearchParams((prev) => {
       prev.set('page', pageIndex.toString())
+
+      return prev
+    })
+  }
+
+  function handleFilter(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const form = event.currentTarget
+
+    const formData = new FormData(form)
+    const data = Object.fromEntries(formData)
+
+    const orderId = data.orderId.toString()
+    const customerName = data.customerName.toString()
+    const status = data.status.toString()
+
+    setSearchParams((prev) => {
+      if (orderId) {
+        prev.set('orderId', orderId)
+      } else {
+        prev.delete('orderId')
+      }
+
+      if (customerName) {
+        prev.set('customerName', customerName)
+      } else {
+        prev.delete('customerName')
+      }
+
+      if (status) {
+        prev.set('status', status)
+      } else {
+        prev.delete('status')
+      }
+
+      prev.set('page', '0')
 
       return prev
     })
@@ -54,13 +95,23 @@ export function Orders() {
             <Loader2Icon className="h-5 w-5 animate-spin text-muted-foreground" />
           )}
         </h1>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <DateRangePicker />
-            <Input placeholder="Nº do pedido" className="w-auto" />
-            <Input placeholder="Nome do cliente" className="w-[320px]" />
-            <Select>
-              <SelectTrigger className="w-[180px]">
+        <div className="space-y-2.5">
+          <form onSubmit={handleFilter} className="flex items-center gap-2">
+            <span className="text-sm font-semibold">Filtros:</span>
+            <Input
+              name="orderId"
+              placeholder="ID do pedido"
+              className="h-8 w-auto"
+              defaultValue={orderId ?? ''}
+            />
+            <Input
+              name="customerName"
+              placeholder="Nome do cliente"
+              className="h-8 w-[320px]"
+              defaultValue={customerName ?? ''}
+            />
+            <Select name="status">
+              <SelectTrigger className="h-8 w-[180px]">
                 <SelectValue placeholder="Status do pedido" />
               </SelectTrigger>
               <SelectContent>
@@ -71,7 +122,11 @@ export function Orders() {
                 <SelectItem value="delivered">Entregue</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+            <Button type="submit" variant="secondary" size="xs">
+              <Search className="mr-2 h-4 w-4" />
+              Filtrar resultados
+            </Button>
+          </form>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
