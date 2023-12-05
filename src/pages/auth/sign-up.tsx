@@ -1,10 +1,59 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
 
+import { RegisterRestaurant } from '@/api/register-restaurant'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
+const signUpSchema = z.object({
+  restaurantName: z.string(),
+  managerName: z.string(),
+  phone: z.string(),
+  email: z.string().email(),
+})
+
+type SignUpSchema = z.infer<typeof signUpSchema>
+
 export function SignUp() {
+  const navigate = useNavigate()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+  })
+
+  const { mutateAsync: registerRestaurant } = useMutation({
+    mutationFn: RegisterRestaurant,
+  })
+
+  async function handleRegisteRestaurant({
+    restaurantName,
+    managerName,
+    email,
+    phone,
+  }: SignUpSchema) {
+    await registerRestaurant({ restaurantName, managerName, email, phone })
+
+    toast.success('Restaurante cadastrado!', {
+      description: '',
+      action: {
+        label: 'Login',
+        onClick: () => {
+          navigate(`/sign-in?email=${email}`)
+        },
+      },
+    })
+  }
+
   return (
     <div className="lg:p-8">
       <a
@@ -29,11 +78,26 @@ export function SignUp() {
         </div>
 
         <div className="grid gap-6">
-          <form>
+          <form onSubmit={handleSubmit(handleRegisteRestaurant)}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Nome do negócio</Label>
-                <Input id="name" type="text" autoCorrect="off" />
+                <Input
+                  id="name"
+                  type="text"
+                  autoCorrect="off"
+                  {...register('restaurantName')}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="name">Seu nome</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  autoCorrect="off"
+                  {...register('managerName')}
+                />
               </div>
 
               <div className="grid gap-2">
@@ -44,15 +108,23 @@ export function SignUp() {
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
+                  {...register('email')}
                 />
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="phone">Celular (com DDD)</Label>
-                <Input id="phone" placeholder="(99) 99999-9999" type="tel" />
+                <Input
+                  id="phone"
+                  placeholder="(99) 99999-9999"
+                  type="tel"
+                  {...register('phone')}
+                />
               </div>
 
-              <Button>Finalizar cadastro</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Finalizar cadastro
+              </Button>
             </div>
           </form>
         </div>

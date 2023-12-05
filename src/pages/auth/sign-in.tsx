@@ -1,14 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 
+import { signIn } from '@/api/sign-in'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { api } from '@/lib/axios'
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -17,27 +18,30 @@ const signInSchema = z.object({
 type SignInSchema = z.infer<typeof signInSchema>
 
 export function SignIn() {
+  const [searchParams] = useSearchParams()
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
-  })
-
-  const { mutateAsync: authenticate } = useMutation({
-    mutationFn: async (email: string) => {
-      await api.post('/authenticate', { email })
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
     },
   })
 
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  })
+
   async function handleAuthenticate({ email }: SignInSchema) {
-    await authenticate(email)
+    await authenticate({ email })
 
     toast.success('Enviamos um link de autenticação para seu e-mail.', {
       action: {
         label: 'Reenviar',
-        onClick: () => authenticate(email),
+        onClick: () => authenticate({ email }),
       },
     })
   }
