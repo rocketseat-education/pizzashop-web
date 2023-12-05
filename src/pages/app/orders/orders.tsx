@@ -1,4 +1,6 @@
 import { Helmet } from 'react-helmet-async'
+import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Input } from '@/components/ui/input'
 import {
@@ -23,18 +25,34 @@ import { OrderTableRow } from './order-table-row'
 import { Pagination } from '@/components/pagination'
 import { Loader2Icon, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { FormEvent } from 'react'
+
+const ordersFiltersSchema = z.object({
+  orderId: z.string().optional(),
+  customerName: z.string().optional(),
+  status: z.string().optional(),
+})
+
+type OrderFiltersSchema = z.infer<typeof ordersFiltersSchema>
 
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const pageIndex = searchParams.get('page')
-    ? Number(searchParams.get('page'))
-    : 0
-
   const orderId = searchParams.get('orderId')
   const customerName = searchParams.get('customerName')
   const status = searchParams.get('status')
+
+  const { register, handleSubmit, reset, control } =
+    useForm<OrderFiltersSchema>({
+      defaultValues: {
+        orderId: orderId ?? '',
+        customerName: customerName ?? '',
+        status: status ?? '',
+      },
+    })
+
+  const pageIndex = searchParams.get('page')
+    ? Number(searchParams.get('page'))
+    : 0
 
   const hasAnyFilter = !!orderId || !!customerName || !!status
 
@@ -52,17 +70,10 @@ export function Orders() {
     })
   }
 
-  function handleFilter(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    const form = event.currentTarget
-
-    const formData = new FormData(form)
-    const data = Object.fromEntries(formData)
-
-    const orderId = data.orderId.toString()
-    const customerName = data.customerName.toString()
-    const status = data.status.toString()
+  function handleFilter(data: OrderFiltersSchema) {
+    const orderId = data.orderId?.toString()
+    const customerName = data.customerName?.toString()
+    const status = data.status?.toString()
 
     setSearchParams((prev) => {
       if (orderId) {
@@ -98,6 +109,12 @@ export function Orders() {
 
       return prev
     })
+
+    reset({
+      orderId: '',
+      customerName: '',
+      status: '',
+    })
   }
 
   return (
@@ -111,33 +128,48 @@ export function Orders() {
           )}
         </h1>
         <div className="space-y-2.5">
-          <form onSubmit={handleFilter} className="flex items-center gap-2">
+          <form
+            onSubmit={handleSubmit(handleFilter)}
+            className="flex items-center gap-2"
+          >
             <span className="text-sm font-semibold">Filtros:</span>
             <Input
-              name="orderId"
               placeholder="ID do pedido"
               className="h-8 w-auto"
-              defaultValue={orderId ?? ''}
+              {...register('orderId')}
             />
             <Input
-              name="customerName"
               placeholder="Nome do cliente"
               className="h-8 w-[320px]"
-              defaultValue={customerName ?? ''}
+              {...register('customerName')}
             />
-            <Select name="status" defaultValue={status ?? undefined}>
-              <SelectTrigger className="h-8 w-[180px]">
-                <SelectValue placeholder="Status do pedido" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">Pendente</SelectItem>
-                <SelectItem value="approved">Aprovado</SelectItem>
-                <SelectItem value="canceled">Cancelado</SelectItem>
-                <SelectItem value="processing">Em preparo</SelectItem>
-                <SelectItem value="delivering">Em entrega</SelectItem>
-                <SelectItem value="delivered">Entregue</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              control={control}
+              name="status"
+              render={({ field: { name, onChange, value, disabled } }) => {
+                return (
+                  <Select
+                    name={name}
+                    onValueChange={onChange}
+                    value={value}
+                    disabled={disabled}
+                  >
+                    <SelectTrigger className="h-8 w-[180px]">
+                      <SelectValue placeholder="Status do pedido" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pendente</SelectItem>
+                      <SelectItem value="approved">Aprovado</SelectItem>
+                      <SelectItem value="canceled">Cancelado</SelectItem>
+                      <SelectItem value="processing">Em preparo</SelectItem>
+                      <SelectItem value="delivering">Em entrega</SelectItem>
+                      <SelectItem value="delivered">Entregue</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )
+              }}
+            />
+
             <Button type="submit" variant="secondary" size="xs">
               <Search className="mr-2 h-4 w-4" />
               Filtrar resultados
