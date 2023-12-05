@@ -12,27 +12,48 @@ import {
 import {
   Table,
   TableBody,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { getOrders } from '@/api/get-orders'
 import { OrderTableRow } from './order-table-row'
 import { Pagination } from '@/components/pagination'
+import { Loader2Icon } from 'lucide-react'
 
 export function Orders() {
-  const { data: result, isLoading: isLoadingOrders } = useQuery({
-    queryKey: ['orders'],
-    queryFn: getOrders,
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const pageIndex = searchParams.get('page')
+    ? Number(searchParams.get('page'))
+    : 0
+
+  const { data: result, isFetching: isFetchingOrders } = useQuery({
+    queryKey: ['orders', pageIndex],
+    queryFn: () => getOrders({ pageIndex }),
+    placeholderData: keepPreviousData,
   })
+
+  function handlePaginate(pageIndex: number) {
+    setSearchParams((prev) => {
+      prev.set('page', pageIndex.toString())
+
+      return prev
+    })
+  }
 
   return (
     <>
       <Helmet title="Pedidos" />
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Pedidos</h1>
+        <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
+          Pedidos
+          {isFetchingOrders && (
+            <Loader2Icon className="h-5 w-5 animate-spin text-muted-foreground" />
+          )}
+        </h1>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <DateRangePicker />
@@ -72,19 +93,12 @@ export function Orders() {
             </Table>
           </div>
           {result && (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
-                Total de {result.meta.totalCount} pedido(s)
-              </span>
-
-              <Pagination
-                pageIndex={0}
-                totalCount={result.meta.totalCount}
-                onPageChange={async (pageIndex) => {
-                  console.log(pageIndex)
-                }}
-              />
-            </div>
+            <Pagination
+              pageIndex={pageIndex}
+              totalCount={result.meta.totalCount}
+              perPage={result.meta.perPage}
+              onPageChange={handlePaginate}
+            />
           )}
         </div>
       </div>
