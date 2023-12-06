@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowRight, Check, Search, X } from 'lucide-react'
+import { ArrowRight, Search, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { approveOrder } from '@/api/approve-order'
@@ -27,34 +27,37 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { mutateAsync: approveOrderFn, isPending: isApprovingOrder } =
-    useMutation({
-      mutationFn: approveOrder,
-      onSuccess: async (_, { orderId }) => {
-        const ordersCache = queryClient.getQueryData<GetOrdersResponse>([
-          'orders',
-        ])
+  const { mutateAsync: approveOrderFn } = useMutation({
+    mutationFn: approveOrder,
+    onSuccess: async (_, { orderId }) => {
+      const ordersCache = queryClient.getQueryData<GetOrdersResponse>([
+        'orders',
+      ])
 
-        if (ordersCache) {
-          queryClient.setQueryData<GetOrdersResponse>(['orders'], {
-            ...ordersCache,
-            orders: ordersCache.orders.map((order) => {
-              if (order.orderId !== orderId) {
-                return order
-              }
+      if (ordersCache) {
+        queryClient.setQueryData<GetOrdersResponse>(['orders'], {
+          ...ordersCache,
+          orders: ordersCache.orders.map((order) => {
+            if (order.orderId !== orderId) {
+              return order
+            }
 
-              return {
-                ...order,
-                status: 'processing',
-              }
-            }),
-          })
-        }
-      },
-    })
+            return {
+              ...order,
+              status: 'processing',
+            }
+          }),
+        })
+      }
+    },
+  })
 
   return (
-    <TableRow>
+    <TableRow
+      className={
+        order.status === 'pending' ? 'bg-stripes animate-stripes' : undefined
+      }
+    >
       <TableCell>
         <Dialog onOpenChange={setIsOrderDetailsOpen} open={isOrderDetailsOpen}>
           <DialogTrigger asChild>
@@ -105,14 +108,14 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         )}
 
         {order.status === 'delivering' && (
-          <Button className="w-full" variant="outline" size="xs">
+          <Button className="w-full" variant="secondary" size="xs">
             Entregue
             <ArrowRight className="ml-2 h-3 w-3" />
           </Button>
         )}
 
         {order.status === 'pending' && (
-          <Button className="w-full" variant="outline" size="xs">
+          <Button className="w-full" variant="success" size="xs">
             Aprovar
             <ArrowRight className="ml-2 h-3 w-3" />
           </Button>

@@ -22,14 +22,6 @@ export function Header() {
             <UtensilsCrossed className="h-4 w-4" />
             Pedidos
           </NavLink>
-          <NavLink to="/evaluations">
-            <Star className="h-4 w-4" />
-            Avaliações
-          </NavLink>
-          <NavLink to="/menu">
-            <ClipboardList className="h-4 w-4" />
-            Cardápio
-          </NavLink>
         </nav>
 
         <div className="ml-auto flex items-center space-x-2">
