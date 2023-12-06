@@ -4,6 +4,8 @@ import { Loader2, Utensils } from 'lucide-react'
 import { getDayOrdersAmount } from '@/api/get-day-orders-amount'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { CardSkeleton } from './card-skeleton'
+
 export function DayOrdersAmountCard() {
   const { data: dayOrdersAmount, isFetching: isLoadingDayOrdersAmount } =
     useQuery({
@@ -22,7 +24,7 @@ export function DayOrdersAmountCard() {
         )}
       </CardHeader>
       <CardContent className="space-y-1">
-        {dayOrdersAmount && (
+        {dayOrdersAmount ? (
           <>
             <span className="text-2xl font-bold">
               {dayOrdersAmount.amount.toLocaleString('pt-BR')}
@@ -43,6 +45,8 @@ export function DayOrdersAmountCard() {
               em relação a ontem
             </p>
           </>
+        ) : (
+          <CardSkeleton />
         )}
       </CardContent>
     </Card>

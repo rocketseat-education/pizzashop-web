@@ -4,6 +4,8 @@ import { DollarSign, Loader2 } from 'lucide-react'
 import { getMonthReceipt } from '@/api/get-month-receipt'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { CardSkeleton } from './card-skeleton'
+
 export function MonthReceiptCard() {
   const { data: monthReceipt, isFetching: isLoadingMonthReceipt } = useQuery({
     queryKey: ['metrics', 'month-receipt'],
@@ -23,7 +25,7 @@ export function MonthReceiptCard() {
         )}
       </CardHeader>
       <CardContent className="space-y-1">
-        {monthReceipt && (
+        {monthReceipt ? (
           <>
             <span className="text-2xl font-bold">
               {monthReceipt.receipt.toLocaleString('pt-BR', {
@@ -47,6 +49,8 @@ export function MonthReceiptCard() {
               em relação ao mês passado
             </p>
           </>
+        ) : (
+          <CardSkeleton />
         )}
       </CardContent>
     </Card>

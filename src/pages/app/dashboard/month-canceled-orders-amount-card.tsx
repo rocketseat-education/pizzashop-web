@@ -4,6 +4,8 @@ import { DollarSign, Loader2 } from 'lucide-react'
 import { getMonthCanceledOrdersAmount } from '@/api/get-month-canceled-orders-amount'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { CardSkeleton } from './card-skeleton'
+
 export function MonthCanceledOrdersAmountCard() {
   const {
     data: monthCanceledOrdersAmount,
@@ -26,7 +28,7 @@ export function MonthCanceledOrdersAmountCard() {
         )}
       </CardHeader>
       <CardContent className="space-y-1">
-        {monthCanceledOrdersAmount && (
+        {monthCanceledOrdersAmount ? (
           <>
             <span className="text-2xl font-bold">
               {monthCanceledOrdersAmount.amount.toLocaleString('pt-BR')}
@@ -47,6 +49,8 @@ export function MonthCanceledOrdersAmountCard() {
               em relação ao mês passado
             </p>
           </>
+        ) : (
+          <CardSkeleton />
         )}
       </CardContent>
     </Card>

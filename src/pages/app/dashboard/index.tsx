@@ -8,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { Label } from '@/components/ui/label'
 
 import { DayOrdersAmountCard } from './day-orders-amount-card'
 import { MonthCanceledOrdersAmountCard } from './month-canceled-orders-amount-card'
@@ -33,70 +31,7 @@ export function Dashboard() {
         </div>
 
         <div className="grid grid-cols-9 gap-4">
-          <Card className="col-span-6">
-            <CardHeader className="flex flex-row items-center justify-between pb-8">
-              <div className="space-y-1">
-                <CardTitle className="text-base font-medium">
-                  Receita no período
-                </CardTitle>
-                <CardDescription>Receita diária no período</CardDescription>
-              </div>
-              <div className="flex items-center gap-3">
-                <Label>Período</Label>
-                <DateRangePicker />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ReceiptChart
-                data={[
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                  {
-                    date: '01/01',
-                    receipt: Math.round(Math.random() * 2000),
-                  },
-                ]}
-              />
-            </CardContent>
-          </Card>
+          <ReceiptChart />
 
           <Card className="col-span-3">
             <CardHeader className="pb-8">
