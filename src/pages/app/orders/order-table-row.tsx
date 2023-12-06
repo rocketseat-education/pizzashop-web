@@ -101,21 +101,21 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
 
       <TableCell>
         {order.status === 'processing' && (
-          <Button className="w-full" variant="outline" size="xs">
+          <Button variant="outline" size="xs">
             Em entrega
             <ArrowRight className="ml-2 h-3 w-3" />
           </Button>
         )}
 
         {order.status === 'delivering' && (
-          <Button className="w-full" variant="secondary" size="xs">
+          <Button variant="outline" size="xs">
             Entregue
             <ArrowRight className="ml-2 h-3 w-3" />
           </Button>
         )}
 
         {order.status === 'pending' && (
-          <Button className="w-full" variant="success" size="xs">
+          <Button variant="outline" size="xs">
             Aprovar
             <ArrowRight className="ml-2 h-3 w-3" />
           </Button>

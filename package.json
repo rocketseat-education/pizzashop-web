@@ -32,6 +32,7 @@
     "react-helmet-async": "2.0.3",
     "react-hook-form": "7.48.2",
     "react-router-dom": "6.18.0",
+    "recharts": "2.10.3",
     "sonner": "1.2.4",
     "sort-by": "1.2.0",
     "tailwind-merge": "2.0.0",
