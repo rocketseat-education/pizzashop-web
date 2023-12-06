@@ -52,6 +52,7 @@ export function ReceiptChart({ data }: ReceiptChartProps) {
           axisLine={false}
           dy={16}
         />
+
         <YAxis
           stroke="#888888"
           tickLine={false}
@@ -75,7 +76,7 @@ export function ReceiptChart({ data }: ReceiptChartProps) {
           stroke={violet['500']}
         />
 
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip cursor={false} content={<CustomTooltip />} />
       </LineChart>
     </ResponsiveContainer>
   )
