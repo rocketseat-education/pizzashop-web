@@ -16,7 +16,7 @@ export function App() {
       <ThemeProvider defaultTheme="light" storageKey="ifood-theme">
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          <Toaster />
+          <Toaster richColors />
         </QueryClientProvider>
       </ThemeProvider>
     </HelmetProvider>

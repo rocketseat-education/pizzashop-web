@@ -29,15 +29,12 @@ export function AccountMenu() {
     staleTime: Infinity,
   })
 
-  const {
-    data: managedRestaurant,
-    isLoading: isLoadingManagedRestaurant,
-    error: managedRestaurantError,
-  } = useQuery({
-    queryKey: ['managed-restaurant'],
-    queryFn: getManagedRestaurant,
-    staleTime: Infinity,
-  })
+  const { data: managedRestaurant, isLoading: isLoadingManagedRestaurant } =
+    useQuery({
+      queryKey: ['managed-restaurant'],
+      queryFn: getManagedRestaurant,
+      staleTime: Infinity,
+    })
 
   const { isPending: isSigningOut, mutateAsync: handleSignOut } = useMutation({
     mutationFn: signOut,
@@ -45,10 +42,6 @@ export function AccountMenu() {
       navigate('/sign-in', { replace: true })
     },
   })
-
-  if (managedRestaurantError) {
-    navigate('/sign-in', { replace: true })
-  }
 
   return (
     <Dialog>

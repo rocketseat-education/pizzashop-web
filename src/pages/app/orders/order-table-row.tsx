@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowRight, Search, X } from 'lucide-react'
+import { ArrowRight, Loader2, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -42,6 +42,8 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
     const ordersListingCache = queryClient.getQueriesData<GetOrdersResponse>({
       queryKey: ['orders'],
     })
+
+    console.log(ordersListingCache)
 
     ordersListingCache.forEach(([cacheKey, cached]) => {
       if (!cached) {
@@ -150,7 +152,11 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
             onClick={() => dispatchOrderFn({ orderId: order.orderId })}
           >
             Em entrega
-            <ArrowRight className="ml-2 h-3 w-3" />
+            {isDispatchingOrder ? (
+              <Loader2 className="ml-2 h-3 w-3 animate-spin" />
+            ) : (
+              <ArrowRight className="ml-2 h-3 w-3" />
+            )}
           </Button>
         )}
 
@@ -162,7 +168,11 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
             onClick={() => deliverOrderFn({ orderId: order.orderId })}
           >
             Entregue
-            <ArrowRight className="ml-2 h-3 w-3" />
+            {isDeliveringOrder ? (
+              <Loader2 className="ml-2 h-3 w-3 animate-spin" />
+            ) : (
+              <ArrowRight className="ml-2 h-3 w-3" />
+            )}
           </Button>
         )}
 
@@ -174,7 +184,11 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
             onClick={() => approveOrderFn({ orderId: order.orderId })}
           >
             Aprovar
-            <ArrowRight className="ml-2 h-3 w-3" />
+            {isApprovingOrder ? (
+              <Loader2 className="ml-2 h-3 w-3 animate-spin" />
+            ) : (
+              <ArrowRight className="ml-2 h-3 w-3" />
+            )}
           </Button>
         )}
       </TableCell>
@@ -189,7 +203,11 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           variant="ghost"
           size="xs"
         >
-          <X className="mr-2 h-3 w-3" />
+          {isCancelingOrder ? (
+            <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+          ) : (
+            <ArrowRight className="mr-2 h-3 w-3" />
+          )}
           Cancelar
         </Button>
       </TableCell>

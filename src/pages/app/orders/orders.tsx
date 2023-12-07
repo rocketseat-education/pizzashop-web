@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Loader2Icon } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
@@ -44,8 +44,6 @@ export function Orders() {
         orderId,
         status: status === 'all' ? null : status,
       }),
-    refetchInterval: 1000 * 15, // 15 seconds
-    placeholderData: keepPreviousData,
   })
 
   function handlePaginate(pageIndex: number) {
