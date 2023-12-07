@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'
 import {
   BarChart,
   Cell,
+  LabelProps,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -63,7 +64,7 @@ export function PopularProductsChart() {
           </CardTitle>
           <BarChart className="h-4 w-4 text-muted-foreground" />
         </div>
-        <CardDescription>Produtos com mais vendas</CardDescription>
+        <CardDescription>Os 5 produtos com mais vendas</CardDescription>
       </CardHeader>
       <CardContent>
         {popularProducts ? (
@@ -79,7 +80,35 @@ export function PopularProductsChart() {
                 innerRadius={64}
                 strokeWidth={8}
                 fill={colors.emerald['500']}
-                label
+                label={({
+                  cx,
+                  cy,
+                  midAngle,
+                  innerRadius,
+                  outerRadius,
+                  value,
+                  index,
+                }) => {
+                  const RADIAN = Math.PI / 180
+                  const radius = 12 + innerRadius + (outerRadius - innerRadius)
+                  const x = cx + radius * Math.cos(-midAngle * RADIAN)
+                  const y = cy + radius * Math.sin(-midAngle * RADIAN)
+
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      className="fill-muted-foreground text-xs"
+                      textAnchor={x > cx ? 'start' : 'end'}
+                      dominantBaseline="central"
+                    >
+                      {popularProducts[index].product
+                        .substring(0, 12)
+                        .concat('...')}{' '}
+                      ({value})
+                    </text>
+                  )
+                }}
                 labelLine={false}
               >
                 {popularProducts.map((_, index) => {
