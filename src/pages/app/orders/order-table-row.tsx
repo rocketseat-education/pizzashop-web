@@ -53,11 +53,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   })
 
   return (
-    <TableRow
-      className={
-        order.status === 'pending' ? 'bg-stripes animate-stripes' : undefined
-      }
-    >
+    <TableRow>
       <TableCell>
         <Dialog onOpenChange={setIsOrderDetailsOpen} open={isOrderDetailsOpen}>
           <DialogTrigger asChild>

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { subDays } from 'date-fns'
-import { Loader2 } from 'lucide-react'
+import { Loader2, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import {
@@ -16,6 +16,7 @@ import {
 import { violet } from 'tailwindcss/colors'
 
 import { getDailyReceiptInPeriod } from '@/api/get-daily-receipt-in-period'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -67,7 +68,9 @@ export function ReceiptChart() {
   const {
     data: dailyReceiptInPeriod,
     isFetching: isLoadingDailyReceiptInPeriod,
+    error: dailyReceiptError,
   } = useQuery({
+    retry: false,
     queryKey: ['metrics', 'daily-receipt-in-period', period],
     queryFn: () =>
       getDailyReceiptInPeriod({
@@ -75,6 +78,13 @@ export function ReceiptChart() {
         to: period?.to,
       }),
   })
+
+  function handleResetPeriod() {
+    setPeriod({
+      from: subDays(new Date(), 7),
+      to: new Date(),
+    })
+  }
 
   return (
     <Card className="col-span-6">
@@ -95,41 +105,74 @@ export function ReceiptChart() {
       </CardHeader>
       <CardContent>
         {dailyReceiptInPeriod ? (
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={dailyReceiptInPeriod} style={{ fontSize: 12 }}>
-              <XAxis
-                dataKey="date"
-                stroke="#888888"
-                tickLine={false}
-                axisLine={false}
-                dy={16}
-              />
+          <>
+            {dailyReceiptInPeriod.length > 0 ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={dailyReceiptInPeriod} style={{ fontSize: 12 }}>
+                  <XAxis
+                    dataKey="date"
+                    stroke="#888888"
+                    tickLine={false}
+                    axisLine={false}
+                    dy={16}
+                  />
 
-              <YAxis
-                stroke="#888888"
-                tickLine={false}
-                axisLine={false}
-                width={80}
-                tickFormatter={(value: number) =>
-                  value.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  })
-                }
-              />
+                  <YAxis
+                    stroke="#888888"
+                    tickLine={false}
+                    axisLine={false}
+                    width={80}
+                    tickFormatter={(value: number) =>
+                      value.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })
+                    }
+                  />
 
-              <CartesianGrid className="!stroke-muted" vertical={false} />
+                  <CartesianGrid className="!stroke-muted" vertical={false} />
 
-              <Line
-                type="linear"
-                strokeWidth={2}
-                dataKey="receipt"
-                stroke={violet['500']}
-              />
+                  <Line
+                    type="linear"
+                    strokeWidth={2}
+                    dataKey="receipt"
+                    stroke={violet['500']}
+                  />
 
-              <Tooltip cursor={false} content={<CustomTooltip />} />
-            </LineChart>
-          </ResponsiveContainer>
+                  <Tooltip cursor={false} content={<CustomTooltip />} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-[240px] w-full flex-col items-center justify-center gap-0.5">
+                <span className="text-sm text-muted-foreground">
+                  Nenhum resultado encontrado para o período.
+                </span>
+                <Button
+                  variant="link"
+                  size="xs"
+                  className="text-violet-500 dark:text-violet-400"
+                  onClick={handleResetPeriod}
+                >
+                  Exibir resultados dos últimos 7 dias
+                </Button>
+              </div>
+            )}
+          </>
+        ) : dailyReceiptError ? (
+          <div className="flex h-[240px] w-full flex-col items-center justify-center gap-0.5">
+            <span className="flex items-center gap-2 text-sm text-red-500 dark:text-red-400">
+              <XCircle className="h-4 w-4" />
+              Erro ao obter dados do período.
+            </span>
+            <Button
+              variant="link"
+              size="xs"
+              className="text-violet-500 dark:text-violet-400"
+              onClick={handleResetPeriod}
+            >
+              Recarregar gráfico
+            </Button>
+          </div>
         ) : (
           <div className="flex h-[240px] w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

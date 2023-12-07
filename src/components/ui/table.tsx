@@ -87,7 +87,10 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
+    className={cn(
+      'px-4 py-3.5 align-middle [&:has([role=checkbox])]:pr-0',
+      className,
+    )}
     {...props}
   />
 ))
