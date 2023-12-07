@@ -18,10 +18,10 @@ export function OrdersTableSkeleton() {
             </TableCell>
 
             <TableCell className="font-mono text-xs font-medium">
-              <Skeleton className="h-4 w-[180px]" />
+              <Skeleton className="h-4 w-[172px]" />
             </TableCell>
             <TableCell className="text-muted-foreground">
-              <Skeleton className="h-4 w-[180px]" />
+              <Skeleton className="h-4 w-[148px]" />
             </TableCell>
 
             <TableCell>
