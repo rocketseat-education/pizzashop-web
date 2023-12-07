@@ -44,6 +44,7 @@ export function Orders() {
         orderId,
         status: status === 'all' ? null : status,
       }),
+    refetchInterval: 1000 * 15, // 15 seconds
     placeholderData: keepPreviousData,
   })
 
