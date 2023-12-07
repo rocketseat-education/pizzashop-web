@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Loader2 } from 'lucide-react'
 
 import { getOrderDetails } from '@/api/get-order-details'
 import { OrderStatus } from '@/components/order-status'
@@ -21,13 +22,19 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import { OrderDetailsSkeleton } from './order-details-skeleton'
+
 interface OrderDetailsProps {
   orderId: string
   open: boolean
 }
 
 export function OrderDetails({ orderId, open }: OrderDetailsProps) {
-  const { data: order, isLoading: isLoadingOrder } = useQuery({
+  const {
+    data: order,
+    isLoading: isLoadingOrder,
+    isFetching: isFetchingOrder,
+  } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => getOrderDetails({ orderId }),
     staleTime: 1000 * 60 * 15, // 15 minutes
@@ -37,9 +44,16 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
   return (
     <DialogContent className="sm:max-w-[520px]">
       <DialogHeader>
-        <DialogTitle>Pedido: {orderId}</DialogTitle>
+        <DialogTitle className="flex items-center gap-2">
+          Pedido: {orderId}
+          {isFetchingOrder && (
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          )}
+        </DialogTitle>
         <DialogDescription>Detalhes do pedido</DialogDescription>
       </DialogHeader>
+
+      {isLoadingOrder && <OrderDetailsSkeleton />}
 
       {order && (
         <div className="space-y-6">
