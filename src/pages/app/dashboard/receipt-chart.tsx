@@ -110,7 +110,6 @@ export function ReceiptChart() {
                 tickLine={false}
                 axisLine={false}
                 width={80}
-                dx={-8}
                 tickFormatter={(value: number) =>
                   value.toLocaleString('pt-BR', {
                     style: 'currency',

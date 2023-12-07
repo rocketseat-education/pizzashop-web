@@ -48,6 +48,7 @@
     "autoprefixer": "10.4.16",
     "eslint": "8.54.0",
     "eslint-plugin-simple-import-sort": "10.0.0",
+    "eslint_d": "13.1.1",
     "postcss": "8.4.31",
     "prettier-plugin-tailwindcss": "0.5.7",
     "tailwindcss": "3.3.5",
