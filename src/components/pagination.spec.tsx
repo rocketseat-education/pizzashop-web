@@ -1,4 +1,4 @@
-import { render, RenderResult } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { Mock } from 'vitest'
 
