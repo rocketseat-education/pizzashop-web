@@ -41,17 +41,21 @@ export function SignUp() {
     email,
     phone,
   }: SignUpSchema) {
-    await registerRestaurant({ restaurantName, managerName, email, phone })
+    try {
+      await registerRestaurant({ restaurantName, managerName, email, phone })
 
-    toast.success('Restaurante cadastrado!', {
-      description: '',
-      action: {
-        label: 'Login',
-        onClick: () => {
-          navigate(`/sign-in?email=${email}`)
+      toast.success('Restaurante cadastrado!', {
+        description: '',
+        action: {
+          label: 'Login',
+          onClick: () => {
+            navigate(`/sign-in?email=${email}`)
+          },
         },
-      },
-    })
+      })
+    } catch (err) {
+      toast.error('Erro ao registrar restaurante!')
+    }
   }
 
   return (
@@ -91,9 +95,9 @@ export function SignUp() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="name">Seu nome</Label>
+                <Label htmlFor="managerName">Seu nome</Label>
                 <Input
-                  id="name"
+                  id="managerName"
                   type="text"
                   autoCorrect="off"
                   {...register('managerName')}
@@ -113,7 +117,7 @@ export function SignUp() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="phone">Celular (com DDD)</Label>
+                <Label htmlFor="phone">Celular</Label>
                 <Input
                   id="phone"
                   placeholder="(99) 99999-9999"

@@ -1,8 +1,6 @@
 import { http, HttpResponse } from 'msw'
 
-interface SignInRequest {
-  email: string
-}
+import { SignInRequest } from '../sign-in'
 
 export const signInMock = http.post<never, SignInRequest>(
   '/authenticate',
