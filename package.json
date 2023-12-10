@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:test": "vite --port 50789 --mode test",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest"
@@ -41,6 +42,7 @@
     "zod": "3.22.4"
   },
   "devDependencies": {
+    "@playwright/test": "1.40.1",
     "@rocketseat/eslint-config": "2.1.0",
     "@testing-library/jest-dom": "6.1.5",
     "@testing-library/react": "14.1.2",
@@ -62,5 +64,8 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vitest": "1.0.2"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

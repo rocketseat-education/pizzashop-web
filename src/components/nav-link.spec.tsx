@@ -14,12 +14,7 @@ describe('NavLink', () => {
       </MemoryRouter>,
     )
 
-    expect(wrapper.getByText('Home').dataset).toEqual({
-      current: 'false',
-    })
-
-    expect(wrapper.getByText('About').dataset).toEqual({
-      current: 'true',
-    })
+    expect(wrapper.getByText('Home').dataset.current).toBe('false')
+    expect(wrapper.getByText('About').dataset.current).toBe('true')
   })
 })

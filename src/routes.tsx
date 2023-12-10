@@ -4,8 +4,6 @@ import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { NotFound } from './pages/404'
 import { Dashboard } from './pages/app/dashboard'
-import { Evaluations } from './pages/app/evaluations/evaluations'
-import { Menu } from './pages/app/menu/menu'
 import { Orders } from './pages/app/orders/orders'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
@@ -23,14 +21,6 @@ export const router = createBrowserRouter([
       {
         path: '/orders',
         element: <Orders />,
-      },
-      {
-        path: '/evaluations',
-        element: <Evaluations />,
-      },
-      {
-        path: '/menu',
-        element: <Menu />,
       },
     ],
   },
