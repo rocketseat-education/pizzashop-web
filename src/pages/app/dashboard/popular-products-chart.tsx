@@ -3,7 +3,6 @@ import { Loader2 } from 'lucide-react'
 import {
   BarChart,
   Cell,
-  LabelProps,
   Pie,
   PieChart,
   ResponsiveContainer,
