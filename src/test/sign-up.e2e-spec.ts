@@ -31,8 +31,6 @@ test('sign up with error', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Finalizar cadastro' }).click()
 
-  await page.waitForResponse('**/restaurants')
-
   const toast = page.getByText('Erro ao registrar restaurante!')
 
   expect(toast).toBeVisible()

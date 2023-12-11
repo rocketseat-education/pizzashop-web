@@ -25,7 +25,7 @@ import { Textarea } from './ui/textarea'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
-  description: z.string(),
+  description: z.string().nullable(),
 })
 
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
@@ -51,23 +51,38 @@ export function StoreProfile() {
     },
   })
 
+  function updateProfileDataOnCache({ name, description }: StoreProfileSchema) {
+    const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+      'managed-restaurant',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetManagedRestaurantResponse>(
+        ['managed-restaurant'],
+        {
+          ...cached,
+          name,
+          description,
+        },
+      )
+    }
+
+    return { cached }
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
-    onMutate: async ({ name, description }) => {
-      const managedRestaurantCache =
-        queryClient.getQueryData<GetManagedRestaurantResponse>([
-          'managed-restaurant',
-        ])
+    onMutate: ({ name, description }) => {
+      const { cached } = updateProfileDataOnCache({
+        name,
+        description,
+      })
 
-      if (managedRestaurantCache) {
-        queryClient.setQueryData<GetManagedRestaurantResponse>(
-          ['managed-restaurant'],
-          {
-            ...managedRestaurantCache,
-            name,
-            description,
-          },
-        )
+      return { previousProfile: cached }
+    },
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateProfileDataOnCache(context.previousProfile)
       }
     },
   })
@@ -76,12 +91,16 @@ export function StoreProfile() {
     name,
     description,
   }: StoreProfileSchema) {
-    await updateProfileFn({
-      name,
-      description,
-    })
+    try {
+      await updateProfileFn({
+        name,
+        description,
+      })
 
-    toast.success('Perfil atualizado com sucesso!')
+      toast.success('Perfil atualizado com sucesso!')
+    } catch {
+      toast.error('Falha ao atualizar o perfil, tente novamente!')
+    }
   }
 
   return (
