@@ -10,8 +10,6 @@ test('sign up successfully', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Finalizar cadastro' }).click()
 
-  await page.waitForResponse('**/restaurants')
-
   const toast = page.getByText('Restaurante cadastrado!')
 
   expect(toast).toBeVisible()

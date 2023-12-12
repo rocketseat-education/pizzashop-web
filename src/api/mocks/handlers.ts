@@ -8,6 +8,7 @@ import { getMonthCanceledOrdersAmountMock } from './get-month-canceled-orders-am
 import { getMonthOrdersAmountMock } from './get-month-orders-amount-mock'
 import { getMonthReceiptMock } from './get-month-receipt-mock'
 import { getOrderDetailsMock } from './get-order-details-mock'
+import { getOrdersMock } from './get-orders-mock'
 import { getPopularProductsMock } from './get-popular-products-mock'
 import { getProfileMock } from './get-profile-mock'
 import { registerRestaurantMock } from './register-restaurant-mock'
@@ -30,4 +31,5 @@ export const handlers = [
   dispatchOrderMock,
   getOrderDetailsMock,
   getPopularProductsMock,
+  getOrdersMock,
 ]
