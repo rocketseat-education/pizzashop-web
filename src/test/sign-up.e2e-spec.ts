@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('sign up successfully', async ({ page }) => {
-  await page.goto('/sign-up')
+  await page.goto('/sign-up', { waitUntil: 'networkidle' })
 
   await page.getByLabel('Nome do negócio').fill('Pizza Shop')
   await page.getByLabel('Seu nome').fill('John Doe')
@@ -20,7 +20,7 @@ test('sign up successfully', async ({ page }) => {
 })
 
 test('sign up with error', async ({ page }) => {
-  await page.goto('/sign-up')
+  await page.goto('/sign-up', { waitUntil: 'networkidle' })
 
   await page.getByLabel('Nome do negócio').fill('Invalid name')
   await page.getByLabel('Seu nome').fill('John Doe')

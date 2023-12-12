@@ -14,6 +14,8 @@ test('paginate orders', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Próxima página' }).click()
 
+  await page.waitForLoadState('networkidle')
+
   expect(
     page.getByRole('cell', { name: 'order-11', exact: true }),
   ).toBeVisible()
@@ -22,6 +24,8 @@ test('paginate orders', async ({ page }) => {
   ).toBeVisible()
 
   await page.getByRole('button', { name: 'Última página' }).click()
+
+  await page.waitForLoadState('networkidle')
 
   expect(
     page.getByRole('cell', { name: 'order-51', exact: true }),
@@ -32,6 +36,8 @@ test('paginate orders', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Página anterior' }).click()
 
+  await page.waitForLoadState('networkidle')
+
   expect(
     page.getByRole('cell', { name: 'order-41', exact: true }),
   ).toBeVisible()
@@ -40,6 +46,8 @@ test('paginate orders', async ({ page }) => {
   ).toBeVisible()
 
   await page.getByRole('button', { name: 'Primeira página' }).click()
+
+  await page.waitForLoadState('networkidle')
 
   expect(page.getByRole('cell', { name: 'order-1', exact: true })).toBeVisible()
   expect(
@@ -52,6 +60,8 @@ test('filter by order id', async ({ page }) => {
 
   await page.getByPlaceholder('ID do pedido').fill('order-11')
   await page.getByRole('button', { name: 'Filtrar resultados' }).click()
+
+  await page.waitForLoadState('networkidle')
 
   expect(
     page.getByRole('cell', { name: 'order-11', exact: true }),
@@ -67,6 +77,8 @@ test('filter by customer name', async ({ page }) => {
 
   await page.getByPlaceholder('Nome do cliente').fill('Customer 11')
   await page.getByRole('button', { name: 'Filtrar resultados' }).click()
+
+  await page.waitForLoadState('networkidle')
 
   expect(
     page.getByRole('cell', { name: 'order-11', exact: true }),
@@ -85,7 +97,9 @@ test('filter by status', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Filtrar resultados' }).click()
 
-  const tableRows = await page.getByRole('cell', { name: 'order-' }).all()
+  await page.waitForLoadState('networkidle')
+
+  const tableRows = await page.getByRole('cell', { name: /order-/i }).all()
 
   const pendingTableRows = await page
     .getByRole('cell', { name: 'Pendente' })
